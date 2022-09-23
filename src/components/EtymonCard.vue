@@ -61,6 +61,9 @@ export default defineComponent({
     font-size: 1.2em;
 }
 
+.e-word-container{
+    line-height: 1.6em;
+}
 .e-word-container.indent {
     margin-left: 10px;
 }
@@ -68,8 +71,6 @@ export default defineComponent({
 .e-word {
     min-width: 5em;
 }
-
-.e-cn {}
 
 .e-desc {
     color: #6a7a8a;
