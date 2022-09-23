@@ -77,7 +77,7 @@ export default defineComponent({
         currEtymon.value = data.value[0]
       }
     }
-    search('', undefined)
+    search('', null)
 
     const debounce = utils.debounce(search, 300)
     const reg = /^[ a-z-]+$/
