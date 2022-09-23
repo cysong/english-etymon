@@ -14,11 +14,24 @@ import {
     create,
     // component
     NButton,
+    NSpace,
+    NLayout,
+    NLayoutHeader,
+    NLayoutContent,
+    NLayoutFooter,
     NConfigProvider
 } from 'naive-ui'
 
 const naive = create({
-    components: [NButton]
+    components: [
+        NButton,
+        NSpace,
+        NLayout,
+        NLayoutHeader,
+        NLayoutContent,
+        NLayoutFooter,
+        NConfigProvider
+    ]
 })
 app.use(naive)
 
