@@ -22,6 +22,7 @@ export type Etymon = {
     label: string,
     etymons: string[],
     base: string,
+    synonym: string,
     means: Mean[]
 }
 
