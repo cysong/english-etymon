@@ -31,9 +31,6 @@ export default defineComponent({
     components: { NDivider },
     props: {
         value: { type: Object as PropType<Etymon> }
-    },
-    setup(props) {
-
     }
 })
 </script>

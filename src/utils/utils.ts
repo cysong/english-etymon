@@ -2,10 +2,7 @@
 export default {
   debounce: function (fn: Function, wait: number) {
     let timer: number | null = null;
-    return function () {
-      let context = this; // 注意 this 指向
-      let args = arguments; // arguments中存着event
-
+    return function (...args: any[]) {
       if (timer)
         clearTimeout(timer);
       timer = setTimeout(function () {

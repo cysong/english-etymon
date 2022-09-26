@@ -15,10 +15,11 @@ import {
     // component
     NButton,
     NSpace,
-    NLayout,
-    NLayoutHeader,
-    NLayoutContent,
-    NLayoutFooter,
+    NInput,
+    NList,
+    NListItem,
+    NScrollbar,
+    NEmpty,
     NConfigProvider
 } from 'naive-ui'
 
@@ -26,10 +27,11 @@ const naive = create({
     components: [
         NButton,
         NSpace,
-        NLayout,
-        NLayoutHeader,
-        NLayoutContent,
-        NLayoutFooter,
+        NInput,
+        NList,
+        NListItem,
+        NScrollbar,
+        NEmpty,
         NConfigProvider
     ]
 })

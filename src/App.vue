@@ -56,18 +56,13 @@ import jsonData from '@/assets/etymons.json';
 import EtymonCard from '@/components/EtymonCard.vue';
 import type { Etymon } from '@/components/types';
 import utils from '@/utils/utils';
-import { NButton, NButtonGroup, NCol, NConfigProvider, NDataTable, NEmpty, NInput, NList, NListItem, NRow, NScrollbar, NSpace, NThemeEditor } from 'naive-ui';
 import { computed, defineComponent, ref, type Ref } from 'vue';
 
 const MAX_COUNT: number = 10
 
 export default defineComponent({
-  components: { EtymonCard, NThemeEditor, NConfigProvider, NInput, NSpace, NDataTable, NRow, NCol, NList, NListItem, NScrollbar, NEmpty, NButton, NButtonGroup },
+  components: { EtymonCard },
   setup() {
-
-    function buildEtymonLite(e: Etymon) {
-      return { type: e.type, label: e.label, base: e.base, etymons: e.etymons }
-    }
 
     let currEtymon: Ref<Etymon | undefined> = ref(undefined)
 
