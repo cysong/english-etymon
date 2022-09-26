@@ -44,8 +44,11 @@ export default defineComponent({
     color: #ff8000
 }
 
-.e-base-container>span:nth-child(2) {
-    margin-left: 5px;
+.e-base-container{
+    font-style: italic;
+}
+.e-base-container>span:not(:first-child) {
+    margin-left: 3px;
 }
 
 .e-mean-container {

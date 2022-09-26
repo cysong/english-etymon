@@ -23,8 +23,18 @@
                     <div class="meaning ellip">{{item.base || (item.means&&item.means[0].meaning)||''}}</div>
                   </div>
                 </n-list-item>
+                <template #footer>
+                  <div class="paging">
+                    <n-button text color="#aaaaaa" v-show="showPrevPage" @click="prevPage">
+                      上一页
+                    </n-button>
+                    <n-button text color="#aaaaaa" v-show="showNextPage" @click="nextPage">
+                      下一页
+                    </n-button>
+                  </div>
+                </template>
               </n-list>
-              <n-empty v-if="data.length==0" description="没有找到你输入的词根" style="margin-top:150px;"></n-empty>
+              <n-empty v-if="data.length==0" description="没有更多数据了" style="margin-top:150px;"></n-empty>
             </n-scrollbar>
           </div>
           <div class="c-col-right">
@@ -46,13 +56,13 @@ import jsonData from '@/assets/etymons.json';
 import EtymonCard from '@/components/EtymonCard.vue';
 import type { Etymon } from '@/components/types';
 import utils from '@/utils/utils';
-import { NCol, NConfigProvider, NDataTable, NInput, NList, NListItem, NRow, NScrollbar, NSpace, NThemeEditor, NEmpty } from 'naive-ui';
-import { defineComponent, ref, type Ref } from 'vue';
+import { NButton, NButtonGroup, NCol, NConfigProvider, NDataTable, NEmpty, NInput, NList, NListItem, NRow, NScrollbar, NSpace, NThemeEditor } from 'naive-ui';
+import { computed, defineComponent, ref, type Ref } from 'vue';
 
 const MAX_COUNT: number = 10
 
 export default defineComponent({
-  components: { EtymonCard, NThemeEditor, NConfigProvider, NInput, NSpace, NDataTable, NRow, NCol, NList, NListItem, NScrollbar, NEmpty },
+  components: { EtymonCard, NThemeEditor, NConfigProvider, NInput, NSpace, NDataTable, NRow, NCol, NList, NListItem, NScrollbar, NEmpty, NButton, NButtonGroup },
   setup() {
 
     function buildEtymonLite(e: Etymon) {
@@ -68,31 +78,67 @@ export default defineComponent({
     const etymons: Array<Etymon> = jsonData
     const data: Ref<Array<Etymon>> = ref([])
 
-    function search(query: string, type: number | null) {
-      data.value = utils.filterTopN(etymons, function (x: Etymon) {
+    const forwardIndex: Ref<number> = ref(0)
+    const backwordIndex: Ref<number> = ref(-1)
+
+    function resetIndex() {
+      forwardIndex.value = 0
+      backwordIndex.value = -1
+    }
+
+    function search(query: string, type: number | null, backword: boolean = false, startIndex: number = 0) {
+      const filter: Function = function (x: Etymon) {
         return (!type || (type && type === x.type))
           && (query === '' || (x.etymons.some(e => e.startsWith(query))))
-      }, MAX_COUNT)
+      }
+      let index: number
+      if (backword) {
+        [index, data.value] = utils.filterBackwordTopN(etymons, filter, MAX_COUNT, startIndex)
+      } else {
+        [index, data.value] = utils.filterTopN(etymons, filter, MAX_COUNT, startIndex)
+      }
+
       if (data.value.length > 0 && !currEtymon.value) {
         currEtymon.value = data.value[0]
+      }
+      if (backword) {
+        forwardIndex.value = backwordIndex.value + 1
+        backwordIndex.value = index - 1
+      } else {
+        backwordIndex.value = forwardIndex.value - 1
+        forwardIndex.value = index + 1
       }
     }
     search('', null)
 
-    const debounce = utils.debounce(search, 300)
-    const reg = /^[ a-z-]+$/
-    function handleInput(input: String) {
-      let query = input.trim().toLowerCase();
+    let query: string = ''
+    let type: number | null
 
-      let type: number | undefined
+    function nextPage() {
+      search(query, type, false, forwardIndex.value)
+    }
+
+    function prevPage() {
+      search(query, type, true, backwordIndex.value)
+    }
+
+    let showPrevPage = computed(() => backwordIndex.value > -1)
+    let showNextPage = computed(() => forwardIndex.value < etymons.length)
+
+    const debounce = utils.debounce(search, 300)
+    function handleInput(input: String) {
+      query = input.trim().toLowerCase();
       if (query.startsWith('-')) {
         type = 3
         query = query.replace(/^-+/, '')
       } else if (query.endsWith('-')) {
         type = 2
         query = query.replace(/-+$/, '')
+      } else {
+        type = null
       }
-      debounce(query, type)
+      resetIndex()
+      debounce(query, type, false, 0)
     }
 
     return {
@@ -102,6 +148,10 @@ export default defineComponent({
       currEtymon,
       keyword: ref(''),
       handleInput,
+      showPrevPage,
+      showNextPage,
+      nextPage,
+      prevPage,
     }
   }
 })
@@ -189,5 +239,14 @@ export default defineComponent({
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.paging {
+  display: flex;
+  justify-content: end;
+}
+
+.paging>*:not(:first-child) {
+  margin-left: 5px;
 }
 </style>
